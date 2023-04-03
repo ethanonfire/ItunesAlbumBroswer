@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/albumListFragment">
+
+    <fragment
+        android:id="@+id/albumListFragment"
+        android:name="com.touchtune.myapplication.AlbumListFragment"
+        android:label="AlbumListFragment"
+
+        tools:layout="@layout/fragment_album_list">
+
+        <action
+            android:id="@+id/action_albumListFragment_to_recentSearchFragment"
+            app:destination="@id/recentSearchFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recentSearchFragment"
+        android:name="com.touchtune.myapplication.ArtistSearchFragment"
+        android:label="ArtistSearchFragment"
+
+        tools:layout="@layout/fragment_recent_searches">
+
+
+        <action
+            android:id="@+id/action_recentSearchFragment_to_albumListFragment"
+            app:destination="@id/albumListFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+    </fragment>
+
+
+</navigation>

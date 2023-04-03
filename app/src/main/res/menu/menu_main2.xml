@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search1"
+        android:icon="@drawable/ic_search_24"
+        android:title="@string/app_name"
+        app:actionViewClass="androidx.appcompat.widget.AppCompatButton"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <item
+        android:id="@+id/action_search2"
+        android:title="@string/app_name"
+        app:actionViewClass="androidx.appcompat.widget.AppCompatTextView"
+        app:showAsAction="ifRoom" />
+
+</menu>

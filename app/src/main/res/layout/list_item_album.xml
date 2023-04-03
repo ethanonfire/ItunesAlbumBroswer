@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="album"
+            type="com.touchtune.myapplication.data.Album" />
+
+        <import type="com.touchtune.myapplication.utilities.Utils" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:onClick="@{clickListener}"
+        android:orientation="vertical"
+        android:theme="@style/Theme.MyApplication">
+
+        <ImageView
+            android:id="@+id/iv_artwork"
+            android:layout_width="0dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:imageFromUrl="@{album.artworkUrl100}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_album_name"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="151dp"
+            tools:layout_editor_absoluteY="-5dp" />
+
+        <TextView
+            android:id="@+id/tv_album_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:ellipsize="marquee"
+            android:fontFamily="@font/robotobold"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:maxLines="1"
+            android:text="@{album.artistName}"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/tv_release_date"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_artwork"
+            tools:text="Titanic" />
+
+        <TextView
+            android:id="@+id/tv_release_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/robotobold"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@{Integer.toString(Utils.javaDateTimeConverter(album.releaseDate).year)}"
+            android:textColor="@color/gray"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_album_name"
+            tools:layout_editor_absoluteX="-16dp"
+            tools:layout_editor_absoluteY="111dp"
+            tools:text="2001">
+
+        </TextView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

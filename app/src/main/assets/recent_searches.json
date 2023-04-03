@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "artistName": "Michael Jackson",
+    "timeAdded": 1
+  },
+  {
+    "id": "2",
+    "artistName": "Taylor Swift",
+    "timeAdded": 2
+  },
+  {
+    "id": "3",
+    "artistName": "Elton John",
+    "timeAdded": 3
+  },
+  {
+    "id": "4",
+    "artistName": "Lady gaga",
+    "timeAdded": 4
+  },
+  {
+    "id": "5",
+    "artistName": "Julio iglesias",
+    "timeAdded": 5
+  }
+]

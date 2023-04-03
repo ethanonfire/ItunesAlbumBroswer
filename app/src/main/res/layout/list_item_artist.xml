@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="artist"
+            type="com.touchtune.myapplication.data.Artist" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/black"
+        android:onClick="@{clickListener}"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_artist_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:ellipsize="marquee"
+            android:fontFamily="@font/robotobold"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:maxLines="1"
+            android:text="@{artist.artistName.toString()}"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@id/tv_artist_id"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Taylor Swift" />
+
+        <TextView
+            android:id="@+id/tv_artist_id"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/robotobold"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@{artist.artistId.toString()}"
+            android:textColor="@color/gray"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_artist_name"
+            tools:layout_editor_absoluteX="-16dp"
+            tools:layout_editor_absoluteY="111dp"
+            tools:text="909253">
+
+        </TextView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
