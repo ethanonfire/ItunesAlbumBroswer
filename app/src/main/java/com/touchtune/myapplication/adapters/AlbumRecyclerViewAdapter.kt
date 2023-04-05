@@ -1,5 +1,6 @@
 package com.touchtune.myapplication.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -27,7 +28,7 @@ class AlbumRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
-
+        Log.d("BindingAdapter", "onBindViewHolder")
         holder.bind(getItem(position))
         holder.binding.setClickListener {
             onItemClick(getItem(position))

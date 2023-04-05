@@ -67,7 +67,6 @@ interface ItunesApiService {
 
     //  https://itunes.apple.com/search?term=julio+iglesias&entity=musicArtist&attribute=allArtistTerm
 
-
     @GET("search")
     suspend fun getArtistsByName(
         @Query("term") artistName: String,
@@ -75,15 +74,12 @@ interface ItunesApiService {
         @Query("allArtistTerm") allArtistTerm: Boolean = true
     ): ArtistResponse
 
-    // https://itunes.apple.com/lookup?id=540287&entity=album&limit=25.
-
+    // https://itunes.apple.com/lookup?id=159260351&entity=album&limit=25.
     @GET("lookup")
-    suspend fun getAlbumById(
+    suspend fun getAlbumsByArtistId(
         @Query("id") id: Long,
         @Query("entity") entity: String = "album",
     ): AlbumResponse
-
-
 }
 
 /**

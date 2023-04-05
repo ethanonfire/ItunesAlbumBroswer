@@ -9,6 +9,10 @@
         <variable
             name="viewmodel"
             type="com.touchtune.myapplication.viewmodels.AlbumListViewModel" />
+
+        <variable
+            name="albumSearchAdapter"
+            type="com.touchtune.myapplication.adapters.AlbumRecyclerViewAdapter" />
     </data>
 
 
@@ -43,6 +47,7 @@
         </androidx.appcompat.widget.Toolbar>
 
         <ProgressBar
+            app:layout_constraintVertical_bias="0.5"
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,13 +58,16 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
+            app:uiState="@{viewmodel.album}" />
 
         <androidx.recyclerview.widget.RecyclerView
+            android:paddingBottom="45dp"
+            app:albumSearchAdapter="@{albumSearchAdapter}"
             android:id="@+id/rv_albumList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/black"
+            app:dataState="@{viewmodel.album}"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
@@ -69,16 +77,16 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
-
+            android:text="No results were found. \n please try a different search"
             android:id="@+id/tv_album_list_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/robotobold"
             android:gravity="center"
-            android:text="no result were found \n please try a different search"
+            android:visibility="gone"
             android:textColor="@color/white"
             android:textSize="20sp"
-            android:visibility="invisible"
+            app:emptyState="@{viewmodel.album}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

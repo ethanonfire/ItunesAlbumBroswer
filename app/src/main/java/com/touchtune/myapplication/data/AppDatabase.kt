@@ -69,7 +69,6 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                 .build()
         }
-
         const val MAX_ENTRIES = 5
     }
 }

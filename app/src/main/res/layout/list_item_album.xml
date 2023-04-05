@@ -51,7 +51,7 @@
             android:gravity="center"
             android:marqueeRepeatLimit="marquee_forever"
             android:maxLines="1"
-            android:text="@{album.artistName}"
+            android:text="@{album.collectionName}"
             android:textColor="@color/white"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@id/tv_release_date"
@@ -67,7 +67,7 @@
             android:fontFamily="@font/robotobold"
             android:gravity="center"
             android:maxLines="1"
-            android:text="@{Integer.toString(Utils.javaDateTimeConverter(album.releaseDate).year)}"
+            android:text="@{album.releaseDate}"
             android:textColor="@color/gray"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -79,6 +79,9 @@
             tools:text="2001">
 
         </TextView>
+
+        <!--        android:text="@{Integer.toString(Utils.javaDateTimeConverter(album.releaseDate).year)}"-->
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

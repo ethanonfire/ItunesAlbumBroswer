@@ -1,6 +1,7 @@
 package com.touchtune.myapplication.data
 
 import com.touchtune.myapplication.UiState
+import com.touchtune.myapplication.utilities.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
@@ -15,15 +16,14 @@ class DefaultRepository(
     }
 
     override fun getRecentSearches(): Flow<UiState> {
-
         return recentSearchDataSource.getRecentSearches()
-            .flowOn(Dispatchers.IO)
             .map {
-                UiState.Success(it)
+                UiState.Success(it, UiState.DataType.RECENT_SEARCH)
             }
             .onStart {
                 emit(UiState.Loading)
-            }
+            }.onCompletion {
+            }.flowOn(Dispatchers.IO)
     }
 
     override suspend fun insertRecentSearch(search: RecentArtistSearch) {
@@ -38,13 +38,32 @@ class DefaultRepository(
         return flow {
             emit(albumRemoteDataSource.getArtistByName(name))
         }.map {
-            UiState.Success(it)
+            if (it.isEmpty()) {
+                UiState.NoData
+            } else {
+                UiState.Success(it, UiState.DataType.ARTIST_SEARCH)
+            }
         }.onStart {
             emit(UiState.Loading)
+        }.onCompletion {
+
+        }.catch {
+
         }.flowOn(Dispatchers.IO)
     }
 
-    override suspend fun getAlbumById(id: Long): List<Album> {
-        return albumRemoteDataSource.getArtistById(id)
+    override suspend fun getAlbumsByArtistId(id: Long): Flow<UiState> {
+
+        return flow {
+            emit(albumRemoteDataSource.getAlbumsByArtistId(id))
+        }.map {
+            if (it.isEmpty()) {
+                UiState.NoData
+            } else {
+                UiState.Success(Utils.processAlbumList(it), UiState.DataType.ALBUM_SEARCH)
+            }
+        }.onCompletion {
+        }.catch {
+        }.flowOn(Dispatchers.IO)
     }
 }

@@ -3,6 +3,21 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.touchtune.myapplication.viewmodels.ArtistSearchViewModel" />
+
+        <variable
+            name="recentSearchAdapter"
+            type="com.touchtune.myapplication.adapters.RecentSearchRecyclerViewAdapter" />
+
+        <variable
+            name="artistSearchAdapter"
+            type="com.touchtune.myapplication.adapters.ArtistRecyclerViewAdapter" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -64,18 +79,22 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
+            app:layout_constraintVertical_bias="0.5"
+            app:uiState="@{viewModel.search}" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recent_searches"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
+            app:artistSearchAdapter="@{artistSearchAdapter}"
+            app:dataState="@{viewModel.search}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_recent_search" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_recent_search"
+            app:recentSearchAdapter="@{recentSearchAdapter}" />
 
         <TextView
             android:id="@+id/tv_album_list_empty"
@@ -87,6 +106,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:visibility="invisible"
+            app:emptyState="@{viewModel.search}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

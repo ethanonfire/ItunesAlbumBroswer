@@ -17,8 +17,8 @@ class AlbumRemoteDataSource(
         return response.results
     }
 
-    override suspend fun getArtistById(id: Long): List<Album> {
-        val response = apiService.getAlbumById(id)
+    override suspend fun getAlbumsByArtistId(id: Long): List<Album> {
+        val response = apiService.getAlbumsByArtistId(id)
         return response.results
     }
 }

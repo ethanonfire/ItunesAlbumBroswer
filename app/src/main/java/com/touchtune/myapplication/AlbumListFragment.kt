@@ -1,40 +1,56 @@
 package com.touchtune.myapplication
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import com.touchtune.myapplication.adapters.AlbumRecyclerViewAdapter
 import com.touchtune.myapplication.adapters.MarginItemDecoration
 import com.touchtune.myapplication.data.Album
 import com.touchtune.myapplication.databinding.DialogInfoBinding
 import com.touchtune.myapplication.databinding.FragmentAlbumListBinding
-import com.touchtune.myapplication.utilities.setGone
-import com.touchtune.myapplication.utilities.setVisible
 import com.touchtune.myapplication.viewmodels.AlbumListViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class AlbumListFragment : Fragment() {
 
     private lateinit var binding: FragmentAlbumListBinding
     private lateinit var albumRecyclerViewAdapter: AlbumRecyclerViewAdapter
 
-    private val viewModel by viewModels<AlbumListViewModel> {
-        AlbumListViewModel.MapViewModelFactory((requireContext().applicationContext as MainApplication).appRepository)
-    }
+//    private val viewModel by viewModels<AlbumListViewModel> {
+//        AlbumListViewModel.MapViewModelFactory((requireContext().applicationContext as MainApplication).appRepository)
+//    }
+
+//    private val viewModel by viewModels<AlbumListViewModel> {
+//        AlbumListViewModel.MapViewModelFactory((requireContext().applicationContext as MainApplication).appRepository)
+//    }
+
+    private val viewModel by viewModel<AlbumListViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentAlbumListBinding.inflate(inflater)
+        Log.d("AlbumListFragment", "onCreateView")
 
+//        viewModel =
+//            AlbumListViewModel.MapViewModelFactory((requireContext().applicationContext as MainApplication).appRepository)
+//                .create(AlbumListViewModel::class.java)
+
+        binding = DataBindingUtil.inflate(
+            inflater, R.layout.fragment_album_list, container,
+            false
+        )
         albumRecyclerViewAdapter =
             AlbumRecyclerViewAdapter {
                 showInfoDialog(
@@ -44,65 +60,64 @@ class AlbumListFragment : Fragment() {
                     it.copyright
                 )
             }
+        binding.lifecycleOwner = this
+        binding.viewmodel = viewModel
+        binding.albumSearchAdapter = albumRecyclerViewAdapter
 
         binding.rvAlbumList.apply {
             addItemDecoration(MarginItemDecoration(30))
             adapter = albumRecyclerViewAdapter
         }
 
-        subscribeUi()
-
-        (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
+        //(activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
 
         binding.toolbar.setOnClickListener {
             findNavController(this)
                 .navigate(R.id.action_albumListFragment_to_recentSearchFragment)
         }
-        return binding.root
-    }
-
-    private fun subscribeUi() {
-        viewModel.albums.observe(viewLifecycleOwner) { uiState ->
-            render(uiState, albumRecyclerViewAdapter)
-        }
-    }
-
-    var job: Job? = null
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         findNavController(this).currentBackStackEntry?.savedStateHandle?.getLiveData<Long>("key")
             ?.observe(
                 viewLifecycleOwner
             ) { result ->
                 //clear current recyclerview first
+
                 albumRecyclerViewAdapter.submitList(mutableListOf<Album>())
                 job?.cancel()
-                job = viewModel.getAlbumById(result!!)
+                job = lifecycleScope.launch {
+                    viewModel.searchAlbumsById(result)
+                }
             }
+
+        return binding.root
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun render(uiState: UiState, adapter: AlbumRecyclerViewAdapter) {
-        when (uiState) {
-            is UiState.Loading -> {
-                binding.progressBar.setVisible()
-            }
-            is UiState.Success<*> -> {
-                //drop the first one, it is only metadata
-                val list = (uiState.items as List<Album>).drop(1)
-                if (list.isEmpty()) {
-                    binding.tvAlbumListEmpty.setVisible()
-                } else {
-                    binding.tvAlbumListEmpty.setGone()
-                }
-                adapter.submitList(list)
-                binding.progressBar.setGone()
-            }
-            is UiState.Error -> {
-                binding.progressBar.setGone()
-                binding.tvAlbumListEmpty.setGone()
+    var job: Job? = null
+    var isFirst = true
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d("AlbumListFragment", "onViewCreated")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        job?.cancel()
+        Log.d("AlbumListFragment", "onStop")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("AlbumListFragment", "onStart")
+
+        if (isFirst) {
+            job = lifecycleScope.launch {
+                viewModel.searchAlbumsById(159260351)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("AlbumListFragment", "onDestroy")
     }
 
     private fun showInfoDialog(

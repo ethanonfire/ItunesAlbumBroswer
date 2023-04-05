@@ -7,5 +7,5 @@ interface AlbumDataSource {
 
     suspend fun getArtistByName(artistName: String): List<Artist>
 
-    suspend fun getArtistById(id: Long): List<Album>
+    suspend fun getAlbumsByArtistId(id: Long): List<Album>
 }

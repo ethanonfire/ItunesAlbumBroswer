@@ -16,6 +16,6 @@ interface Repository {
 
     suspend fun searchArtistByName(name: String): Flow<UiState>
 
-    suspend fun getAlbumById(id: Long): List<Album>
+    suspend fun getAlbumsByArtistId(id: Long): Flow<UiState>
 
 }
