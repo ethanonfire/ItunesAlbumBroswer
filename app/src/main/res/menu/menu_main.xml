@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_search_24"
-        android:title="@string/app_name"
-        app:actionViewClass="androidx.appcompat.widget.AppCompatButton"
-        app:showAsAction="ifRoom|collapseActionView" />
+        android:id="@+id/menu_filter"
+        android:title="Filter"
+        android:icon="@drawable/ic_filter_list"
+        app:showAsAction="always" />
 
 </menu>

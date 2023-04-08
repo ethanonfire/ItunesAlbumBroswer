@@ -16,9 +16,11 @@ class DefaultRepository(
     }
 
     override fun getRecentSearches(): Flow<UiState> {
+
         return recentSearchDataSource.getRecentSearches()
             .map {
-                UiState.Success(it, UiState.DataType.RECENT_SEARCH)
+                val state = UiState.Success(it, UiState.DataType.RECENT_SEARCH) as UiState
+                state
             }
             .onStart {
                 emit(UiState.Loading)
@@ -41,7 +43,8 @@ class DefaultRepository(
             if (it.isEmpty()) {
                 UiState.NoData
             } else {
-                UiState.Success(it, UiState.DataType.ARTIST_SEARCH)
+                val state = UiState.Success(it, UiState.DataType.ARTIST_SEARCH) as UiState
+                state
             }
         }.onStart {
             emit(UiState.Loading)
@@ -62,8 +65,9 @@ class DefaultRepository(
             } else {
                 UiState.Success(Utils.processAlbumList(it), UiState.DataType.ALBUM_SEARCH)
             }
-        }.onCompletion {
-        }.catch {
+        }.onStart {
+            emit(UiState.Loading)
+        }.onCompletion {}.catch {
         }.flowOn(Dispatchers.IO)
     }
 }

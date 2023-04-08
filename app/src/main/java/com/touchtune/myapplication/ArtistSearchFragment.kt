@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.touchtune.myapplication.adapters.ArtistRecyclerViewAdapter
@@ -54,15 +55,6 @@ class ArtistSearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-//        viewModel = ViewModelProvider(requireActivity(),
-//            SharedViewModel.MapViewModelFactory(
-//                (requireContext().applicationContext as MainApplication).appRepository)).get(SharedViewModel::class.java)
-
-//        viewModel =
-//            RecentArtistSearchViewModel.MapViewModelFactory((requireContext().applicationContext as MainApplication).appRepository)
-//                .create(RecentArtistSearchViewModel::class.java)
-
-
         binding = FragmentRecentSearchesBinding.inflate(inflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
@@ -91,55 +83,37 @@ class ArtistSearchFragment : Fragment() {
         binding.svSearch.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(name: String?): Boolean {
-                    Log.d("onQueryTextSubmit", "query: $name")
+                    Log.d("onQuery_submit", "query: $name")
+
                     val imm: InputMethodManager =
                         requireContext().getSystemService(InputMethodService.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(binding.svSearch.windowToken, 0)
-                    name?.let {
-                        if (name.isNotEmpty()) {
-                            viewModel.insertRecentSearch(
-                                RecentArtistSearch(
-                                    0,
-                                    name,
-                                    System.currentTimeMillis()
-                                )
+
+                    if (!name.isNullOrEmpty()) {
+                        viewModel.insertRecentSearch(
+                            RecentArtistSearch(
+                                0,
+                                name,
+                                System.currentTimeMillis()
                             )
-                        }
+                        )
                     }
+
                     return true
                 }
 
                 override fun onQueryTextChange(query: String?): Boolean {
-                    //  Log.d("onQueryTextChange", "query: $query")
-                    Log.d("ArtistSearchFragment", "onQueryTextChange: " + query)
+                    Log.d("onQuery_change", "query: $query")
                     artistSearchJob?.cancel()
-                    if (query.isNullOrEmpty()) {
-                        binding.tvRecentSearch.setVisible()
-                        binding.progressBar.setGone()
-                        binding.tvAlbumListEmpty.setGone()
-                        //show recent search history recyclerview....
-                        binding.rvRecentSearches.adapter = recentSearchAdapter
-                    } else {
-                        binding.tvRecentSearch.setGone()
-                        binding.rvRecentSearches.adapter = artistRecyclerViewAdapter
-                        artistRecyclerViewAdapter.submitList(mutableListOf())
-                        artistSearchJob = lifecycleScope.launch {
-                            viewModel.searchArtistByName(query)
-                        }
-                    }
-
                     query?.let {
-                        artistSearchJob?.cancel()
                         if (it.isNotEmpty()) {
-                            binding.tvRecentSearch.setGone()
                             binding.rvRecentSearches.adapter = artistRecyclerViewAdapter
                             artistRecyclerViewAdapter.submitList(mutableListOf())
                             artistSearchJob = lifecycleScope.launch {
                                 viewModel.searchArtistByName(query)
                             }
-
                         } else {
-                            binding.tvRecentSearch.setVisible()
+                            binding.tvRecentSearchTitle.setVisible()
                             binding.progressBar.setGone()
                             binding.tvAlbumListEmpty.setGone()
                             //show recent search history recyclerview....
@@ -161,6 +135,7 @@ class ArtistSearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.svSearch.isIconified = false
+        printFragmentBackStack()
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {
@@ -187,4 +162,13 @@ class ArtistSearchFragment : Fragment() {
         return super.onCreateAnimation(transit, enter, nextAnim)
     }
 
+    fun printFragmentBackStack() {
+        val fragmentManager: FragmentManager = getParentFragmentManager()
+        val count: Int = fragmentManager.getBackStackEntryCount()
+        Log.d("BackStack", "Current Fragment Back Stack count: $count")
+        for (i in 0 until count) {
+            val entry: FragmentManager.BackStackEntry = fragmentManager.getBackStackEntryAt(i)
+            Log.d("BackStack", "BackStackEntry " + i + ": " + entry.getName())
+        }
+    }
 }

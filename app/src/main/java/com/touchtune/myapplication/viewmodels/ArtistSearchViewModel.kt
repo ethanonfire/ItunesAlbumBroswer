@@ -12,9 +12,9 @@ import java.io.IOException
 
 class ArtistSearchViewModel(var repository: Repository) : ViewModel() {
 
-    private var _search = MutableStateFlow<UiState>(UiState.Loading)
+    private var _searchFlow = MutableStateFlow<UiState?>(null)
 
-    var search: StateFlow<UiState> = _search
+    var searchFlow: StateFlow<UiState?> = _searchFlow
 
     init {
         viewModelScope.launch {
@@ -23,12 +23,9 @@ class ArtistSearchViewModel(var repository: Repository) : ViewModel() {
     }
 
     private suspend fun getRecentSearch() {
-        repository.getRecentSearches().stateIn(
-            scope = viewModelScope,
-            initialValue = UiState.Loading,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000)
-        ).collect {
-            _search.value = it
+        repository.getRecentSearches().collect {
+            Log.d("onQuery_submit",it.toString())
+            _searchFlow.value = it
         }
     }
 
@@ -46,12 +43,8 @@ class ArtistSearchViewModel(var repository: Repository) : ViewModel() {
     }
 
     suspend fun searchArtistByName(name: String) {
-        repository.searchArtistByName(name).stateIn(
-            scope = viewModelScope,
-            initialValue = UiState.Loading,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000)
-        ).collect {
-            _search.value = it
+        repository.searchArtistByName(name).collect {
+            _searchFlow.value = it
         }
     }
 

@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:background="@color/drakGrey"
-            app:layout_constraintBottom_toTopOf="@+id/tv_recent_search"
+            app:layout_constraintBottom_toTopOf="@+id/tv_recent_search_title"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
@@ -57,7 +57,8 @@
 
 
         <TextView
-            android:id="@+id/tv_recent_search"
+            app:recentSearchState="@{viewModel.searchFlow}"
+            android:id="@+id/tv_recent_search_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -70,6 +71,7 @@
 
         <ProgressBar
             android:id="@+id/progressBar"
+            app:loadingState="@{viewModel.searchFlow}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -80,23 +82,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5"
-            app:uiState="@{viewModel.search}" />
+            />
 
         <androidx.recyclerview.widget.RecyclerView
+            app:dataState="@{viewModel.searchFlow}"
+            app:artistSearchAdapter="@{artistSearchAdapter}"
+            app:recentSearchAdapter="@{recentSearchAdapter}"
             android:id="@+id/rv_recent_searches"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
-            app:artistSearchAdapter="@{artistSearchAdapter}"
-            app:dataState="@{viewModel.search}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_recent_search"
-            app:recentSearchAdapter="@{recentSearchAdapter}" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_recent_search_title"
+            />
 
         <TextView
+            app:emptyState="@{viewModel.searchFlow}"
             android:id="@+id/tv_album_list_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -106,7 +110,6 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:visibility="invisible"
-            app:emptyState="@{viewModel.search}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

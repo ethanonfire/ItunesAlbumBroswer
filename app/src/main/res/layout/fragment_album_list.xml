@@ -5,9 +5,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View" />
+
 
         <variable
-            name="viewmodel"
+            name="viewModel"
             type="com.touchtune.myapplication.viewmodels.AlbumListViewModel" />
 
         <variable
@@ -19,81 +21,95 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black">
+        android:background="@color/black"
+        tools:context=".AlbumListFragment"
+        >
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:layout_constraintTop_toTopOf="parent"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_search_24" />
-
-            <TextView
-                android:id="@+id/toolbar_title"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginStart="30dp"
-                android:text="Search Album By Artist Name"
-                android:textColor="@android:color/white"
-                android:textSize="20sp" />
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_constraintTop_toTopOf="parent"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        </androidx.appcompat.widget.Toolbar>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_search_24" />
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="30dp"
+                    android:text="Search Album By Artist Name"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp" />
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <ProgressBar
-            app:layout_constraintVertical_bias="0.5"
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone"
+            tools:visibility="visible"
+            app:loadingState="@{viewModel.albumsFlow}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:uiState="@{viewmodel.album}" />
+            app:layout_constraintVertical_bias="0.5"
+            />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:paddingBottom="45dp"
-            app:albumSearchAdapter="@{albumSearchAdapter}"
+
             android:id="@+id/rv_albumList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/black"
-            app:dataState="@{viewmodel.album}"
+            android:paddingBottom="45dp"
+            app:dataState="@{viewModel.albumsFlow}"
+            app:albumSearchAdapter="@{albumSearchAdapter}"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintTop_toBottomOf="@id/appbar"
+            tools:visibility="visible"
             app:spanCount="2"
             tools:listitem="@layout/list_item_album">
 
         </androidx.recyclerview.widget.RecyclerView>
 
         <TextView
-            android:text="No results were found. \n please try a different search"
             android:id="@+id/tv_album_list_empty"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fontFamily="@font/robotobold"
             android:gravity="center"
-            android:visibility="gone"
+            app:emptyState="@{viewModel.albumsFlow}"
+            android:text="No results were found. \n please try a different search"
             android:textColor="@color/white"
             android:textSize="20sp"
-            app:emptyState="@{viewmodel.album}"
+            android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5"
-
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

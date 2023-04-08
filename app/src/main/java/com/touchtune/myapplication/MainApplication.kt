@@ -17,7 +17,6 @@ class MainApplication : Application() {
         lateinit var appContext: Context
     }
 
-
     override fun onCreate() {
         super.onCreate()
         appContext = this
@@ -26,8 +25,5 @@ class MainApplication : Application() {
             androidContext(this@MainApplication)
             modules(listOf(appModule, repoModule, viewModelModule))
         }
-
-
     }
-
 }

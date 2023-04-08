@@ -2,13 +2,14 @@ package com.touchtune.myapplication
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AlertDialog
-import androidx.databinding.DataBindingUtil
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import com.touchtune.myapplication.adapters.AlbumRecyclerViewAdapter
 import com.touchtune.myapplication.adapters.MarginItemDecoration
@@ -26,15 +27,24 @@ class AlbumListFragment : Fragment() {
     private lateinit var binding: FragmentAlbumListBinding
     private lateinit var albumRecyclerViewAdapter: AlbumRecyclerViewAdapter
 
-//    private val viewModel by viewModels<AlbumListViewModel> {
-//        AlbumListViewModel.MapViewModelFactory((requireContext().applicationContext as MainApplication).appRepository)
-//    }
+    private val albumListViewModel by viewModel<AlbumListViewModel>()
 
-//    private val viewModel by viewModels<AlbumListViewModel> {
-//        AlbumListViewModel.MapViewModelFactory((requireContext().applicationContext as MainApplication).appRepository)
-//    }
+//    private lateinit var albumListViewModel: AlbumListViewModel
 
-    private val viewModel by viewModel<AlbumListViewModel>()
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) =
+        when (item.itemId) {
+
+            R.id.menu_filter -> {
+                showFilteringPopUpMenu()
+                true
+            }
+            else -> false
+        }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,15 +52,9 @@ class AlbumListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         Log.d("AlbumListFragment", "onCreateView")
-
-//        viewModel =
+//        albumListViewModel =
 //            AlbumListViewModel.MapViewModelFactory((requireContext().applicationContext as MainApplication).appRepository)
 //                .create(AlbumListViewModel::class.java)
-
-        binding = DataBindingUtil.inflate(
-            inflater, R.layout.fragment_album_list, container,
-            false
-        )
         albumRecyclerViewAdapter =
             AlbumRecyclerViewAdapter {
                 showInfoDialog(
@@ -60,59 +64,64 @@ class AlbumListFragment : Fragment() {
                     it.copyright
                 )
             }
-        binding.lifecycleOwner = this
-        binding.viewmodel = viewModel
-        binding.albumSearchAdapter = albumRecyclerViewAdapter
+
+        binding = FragmentAlbumListBinding.inflate(inflater, container, false).apply {
+            viewModel = albumListViewModel
+            Log.d("BindingAdapter", "setViewModel")
+            lifecycleOwner = viewLifecycleOwner
+            albumSearchAdapter = albumRecyclerViewAdapter
+        }
+
+//        binding = DataBindingUtil.inflate<FragmentAlbumListBinding?>(
+//            inflater, R.layout.fragment_album_list, container,
+//            false
+//        ).apply {
+//            viewModel = albumListViewModel
+//            Log.d("BindingAdapter", "setViewModel")
+//            lifecycleOwner = viewLifecycleOwner
+//            albumSearchAdapter = albumRecyclerViewAdapter
+//        }
+
+        (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
 
         binding.rvAlbumList.apply {
             addItemDecoration(MarginItemDecoration(30))
             adapter = albumRecyclerViewAdapter
         }
 
-        //(activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
-
         binding.toolbar.setOnClickListener {
             findNavController(this)
                 .navigate(R.id.action_albumListFragment_to_recentSearchFragment)
         }
+
         findNavController(this).currentBackStackEntry?.savedStateHandle?.getLiveData<Long>("key")
             ?.observe(
                 viewLifecycleOwner
             ) { result ->
                 //clear current recyclerview first
-
                 albumRecyclerViewAdapter.submitList(mutableListOf<Album>())
                 job?.cancel()
                 job = lifecycleScope.launch {
-                    viewModel.searchAlbumsById(result)
+                    albumListViewModel.searchAlbumsById(result)
                 }
             }
-
+        setHasOptionsMenu(true)
+        job?.cancel()
+        job = lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                albumListViewModel.searchAlbumsById(159260351)
+            }
+        }
         return binding.root
     }
 
     var job: Job? = null
     var isFirst = true
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.d("AlbumListFragment", "onViewCreated")
-    }
 
     override fun onStop() {
         super.onStop()
         job?.cancel()
         Log.d("AlbumListFragment", "onStop")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("AlbumListFragment", "onStart")
-
-        if (isFirst) {
-            job = lifecycleScope.launch {
-                viewModel.searchAlbumsById(159260351)
-            }
-        }
     }
 
     override fun onDestroy() {
@@ -136,5 +145,19 @@ class AlbumListFragment : Fragment() {
             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
             .create()
         dialog.show()
+    }
+
+    private fun showFilteringPopUpMenu() {
+        val view = activity?.findViewById<View>(R.id.menu_filter) ?: return
+        PopupMenu(requireContext(), view).run {
+            albumListViewModel.years.value?.forEach { year ->
+                this.menu.add(Menu.NONE, year, Menu.NONE, year.toString())
+            }
+            setOnMenuItemClickListener {
+                albumListViewModel.setFiltering(it.itemId)
+                true
+            }
+            show()
+        }
     }
 }
