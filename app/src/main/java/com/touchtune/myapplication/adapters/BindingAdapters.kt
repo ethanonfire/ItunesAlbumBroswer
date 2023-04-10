@@ -20,6 +20,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -29,27 +30,7 @@ import com.touchtune.myapplication.UiState
 import com.touchtune.myapplication.data.Album
 import com.touchtune.myapplication.data.Artist
 import com.touchtune.myapplication.data.RecentArtistSearch
-
-//@BindingAdapter("visibleIff")
-//fun changeVisibility(view: View, uiState: UiState?) {
-//    Log.d("BindingAdapter ", "changeVisibility: " + view.toString() + " " + uiState)
-//
-//     when (uiState) {
-//        is UiState.NoData -> {
-////            Log.d("BindingAdapter", "NoData $uiState")
-//            view.visibility = View.VISIBLE
-//
-//        }
-//        is UiState.Loading -> {
-////            Log.d("BindingAdapter", "Loading $uiState")
-//            view.visibility = View.VISIBLE
-//        }
-//        else -> {
-//            view.visibility = View.GONE
-//
-//        }
-//    }
-//}
+import com.touchtune.myapplication.utilities.setVisible
 
 @BindingAdapter("imageFromUrl")
 fun bindImageFromUrl(view: ImageView, imageUrl: String?) {
@@ -76,11 +57,12 @@ fun setUiStateForLoading(progressView: ProgressBar, uiState: UiState?) {
 }
 
 @BindingAdapter("emptyState")
-fun setUiStateForEmptyView(view: View, uiState: UiState?) {
+fun setUiStateForEmptyView(
+    view: View,
+    uiState: UiState?) {
     view.visibility = when (uiState) {
         UiState.NoData -> {
             View.VISIBLE
-            Log.d("BindingAdapter", "emptyState $uiState")
         }
         else -> View.GONE
     }
@@ -91,25 +73,6 @@ fun setUiStateForErrorView(view: View, uiState: UiState?) {
     view.visibility = when (uiState) {
         is Error -> View.VISIBLE
         else -> View.GONE
-    }
-}
-
-@BindingAdapter("recentSearchState")
-fun setUiStateForRecentSearchTitle(view: View, uiState: UiState?) {
-    when (uiState) {
-        is UiState.Success<*> -> {
-            when (uiState.dataType) {
-                UiState.DataType.RECENT_SEARCH -> {
-                    view.visibility = View.VISIBLE
-                }
-                else -> {
-                    view.visibility = View.GONE
-                }
-            }
-        }
-        else -> {
-            view.visibility = View.GONE
-        }
     }
 }
 
@@ -135,15 +98,19 @@ fun setUiStateForData(
                     (view as RecyclerView).adapter = artistSearchAdapter
                     artistSearchAdapter?.submitList(uiState.items as List<Artist>)
                     Log.d("BindingAdapter", "ARTIST_SEARCH " + uiState.items)
-
                 }
                 UiState.DataType.RECENT_SEARCH -> {
                     val list = uiState.items as List<RecentArtistSearch>
                     Log.d("BindingAdapter", "RECENT_SEARCH " + uiState.items)
-                    (view as RecyclerView).adapter = recentSearchAdapter
-                    recentSearchAdapter?.submitList(list.sortedByDescending {
-                        it.timeAdded
-                    })
+
+                    if (view is RecyclerView) {
+                        view.adapter = recentSearchAdapter
+                        recentSearchAdapter?.submitList(list.sortedByDescending {
+                            it.timeAdded
+                        })
+                    } else if (view is TextView) {
+                        view.setVisible()
+                    }
                 }
                 UiState.DataType.ALBUM_SEARCH -> {
                     Log.d("BindingAdapter", "ALBUM_SEARCH" + uiState.items)

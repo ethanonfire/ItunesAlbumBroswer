@@ -1,5 +1,6 @@
 package com.touchtune.myapplication.data
 
+import android.util.Log
 import com.touchtune.myapplication.UiState
 import com.touchtune.myapplication.utilities.Utils
 import kotlinx.coroutines.Dispatchers
@@ -60,10 +61,12 @@ class DefaultRepository(
         return flow {
             emit(albumRemoteDataSource.getAlbumsByArtistId(id))
         }.map {
-            if (it.isEmpty()) {
+            Log.d("getAlbumsByArtistId", "it: " + it.isEmpty() + " " + it.toString())
+            val list = Utils.processAlbumList(it)
+            if (list.isEmpty()) {
                 UiState.NoData
             } else {
-                UiState.Success(Utils.processAlbumList(it), UiState.DataType.ALBUM_SEARCH)
+                UiState.Success(list, UiState.DataType.ALBUM_SEARCH)
             }
         }.onStart {
             emit(UiState.Loading)

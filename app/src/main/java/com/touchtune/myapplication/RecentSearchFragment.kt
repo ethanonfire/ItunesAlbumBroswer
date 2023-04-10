@@ -11,30 +11,22 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.navigation.fragment.NavHostFragment
-import com.touchtune.myapplication.adapters.ArtistRecyclerViewAdapter
-import com.touchtune.myapplication.data.RecentArtistSearch
-import com.touchtune.myapplication.databinding.FragmentArtistSearchesBinding
-import com.touchtune.myapplication.viewmodels.ArtistSearchViewModel
+import com.touchtune.myapplication.adapters.RecentSearchRecyclerViewAdapter
+import com.touchtune.myapplication.databinding.FragmentRecentSearchesBinding
+import com.touchtune.myapplication.viewmodels.RecentSearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ArtistSearchFragment : Fragment() {
+class RecentSearchFragment : Fragment(){
 
-    val viewModel: ArtistSearchViewModel by viewModel()
+    val viewModel: RecentSearchViewModel by viewModel()
 
-    lateinit var binding: FragmentArtistSearchesBinding
-
-    private var listAdapter = ArtistRecyclerViewAdapter {
-        NavHostFragment.findNavController(requireParentFragment())
-            .previousBackStackEntry?.savedStateHandle?.set(
-                "key",
-                it.artistId
-            )
-        viewModel.insertRecentSearch(
-            RecentArtistSearch(0, it.artistName!!, System.currentTimeMillis())
-        )
-        NavHostFragment.findNavController(requireParentFragment()).popBackStack()
-    }
+    lateinit var binding: FragmentRecentSearchesBinding
+    private var recentSearchAdapter =
+        RecentSearchRecyclerViewAdapter {
+            Log.d("RecentSearchFragment", "RecentSearchFragment")
+            val parentFragment = parentFragment as SearchFragmentMain?
+            parentFragment?.binding?.svSearch?.setQuery(it.artistName, false)
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,23 +34,20 @@ class ArtistSearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentArtistSearchesBinding.inflate(inflater)
+        binding = FragmentRecentSearchesBinding.inflate(inflater)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
-        binding.adapter = listAdapter
-
-        binding.rvArtistSearch.apply {
-            adapter = listAdapter
+        binding.adapter = recentSearchAdapter
+        binding.rvRecentSearches.apply {
+            adapter = recentSearchAdapter
         }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-    }
-
-    fun clearRecyclerViewData(){
-        listAdapter.submitList(mutableListOf())
+       // binding.svSearch.isIconified = false
+        printFragmentBackStack()
     }
 
     override fun onCreateAnimation(transit: Int, enter: Boolean, nextAnim: Int): Animation? {

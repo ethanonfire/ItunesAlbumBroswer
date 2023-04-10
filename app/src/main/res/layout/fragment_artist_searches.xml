@@ -5,34 +5,21 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
-    <data>
+<data>
 
         <variable
             name="viewModel"
-            type="com.touchtune.myapplication.viewmodels.RecentSearchViewModel" />
+            type="com.touchtune.myapplication.viewmodels.ArtistSearchViewModel" />
 
-        <variable
-            name="adapter"
-            type="com.touchtune.myapplication.adapters.RecentSearchRecyclerViewAdapter" />
+    <variable
+        name="adapter"
+        type="com.touchtune.myapplication.adapters.ArtistRecyclerViewAdapter" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black">
-
-        <TextView
-            android:id="@+id/tv_recent_search_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="RECENT SEARCHES"
-            android:textColor="@color/gray"
-            android:textSize="15sp"
-            app:dataState="@{viewModel.recentSearchFlow}"
-            app:layout_constraintBottom_toTopOf="@id/rv_recent_searches"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="visible" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -46,35 +33,38 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5"
-            app:loadingState="@{viewModel.recentSearchFlow}"
+            app:loadingState="@{viewModel.artistSearchFlow}"
             tools:visibility="visible"
 
             />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_recent_searches"
+            android:id="@+id/rv_artist_search"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:dataState="@{viewModel.recentSearchFlow}"
+            android:layout_marginTop="20dp"
+            app:artistSearchAdapter="@{adapter}"
+            app:dataState="@{viewModel.artistSearchFlow}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_recent_search_title"
-            app:recentSearchAdapter="@{adapter}"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible"
+
+            />
 
         <TextView
             android:id="@+id/tv_album_list_empty"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/robotobold"
             android:gravity="center"
-            android:text="No Recent Searches Found"
+            android:text="No results were found. \n please try a different search"
             android:textColor="@color/white"
             android:textSize="20sp"
-            android:visibility="invisible"
-            app:emptyState="@{viewModel.recentSearchFlow}"
+            android:visibility="gone"
+            app:emptyState="@{viewModel.artistSearchFlow}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

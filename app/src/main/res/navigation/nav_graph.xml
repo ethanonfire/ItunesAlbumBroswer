@@ -23,21 +23,10 @@
 
     <fragment
         android:id="@+id/recentSearchFragment"
-        android:name="com.touchtune.myapplication.ArtistSearchFragment"
+        android:name="com.touchtune.myapplication.SearchFragmentMain"
         android:label="ArtistSearchFragment"
 
-        tools:layout="@layout/fragment_recent_searches">
-
-
-        <action
-            android:id="@+id/action_recentSearchFragment_to_albumListFragment"
-            app:destination="@id/albumListFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-    </fragment>
+        tools:layout="@layout/fragment_searches_main"/>
 
 
 </navigation>

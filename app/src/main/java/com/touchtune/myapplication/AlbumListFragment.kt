@@ -52,9 +52,7 @@ class AlbumListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         Log.d("AlbumListFragment", "onCreateView")
-//        albumListViewModel =
-//            AlbumListViewModel.MapViewModelFactory((requireContext().applicationContext as MainApplication).appRepository)
-//                .create(AlbumListViewModel::class.java)
+
         albumRecyclerViewAdapter =
             AlbumRecyclerViewAdapter {
                 showInfoDialog(
@@ -71,16 +69,6 @@ class AlbumListFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
             albumSearchAdapter = albumRecyclerViewAdapter
         }
-
-//        binding = DataBindingUtil.inflate<FragmentAlbumListBinding?>(
-//            inflater, R.layout.fragment_album_list, container,
-//            false
-//        ).apply {
-//            viewModel = albumListViewModel
-//            Log.d("BindingAdapter", "setViewModel")
-//            lifecycleOwner = viewLifecycleOwner
-//            albumSearchAdapter = albumRecyclerViewAdapter
-//        }
 
         (activity as AppCompatActivity?)!!.setSupportActionBar(binding.toolbar)
 
@@ -101,6 +89,7 @@ class AlbumListFragment : Fragment() {
                 //clear current recyclerview first
                 albumRecyclerViewAdapter.submitList(mutableListOf<Album>())
                 job?.cancel()
+                Log.d("AlbumListFragment", "search new albums")
                 job = lifecycleScope.launch {
                     albumListViewModel.searchAlbumsById(result)
                 }
@@ -109,10 +98,20 @@ class AlbumListFragment : Fragment() {
         job?.cancel()
         job = lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                albumListViewModel.searchAlbumsById(159260351)
+                if(isFirst) {
+                    Log.d("AlbumListFragment", "searchAlbumsById")
+                    albumListViewModel.searchAlbumsById(159260351)
+                    isFirst = false
+                }
             }
         }
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d("AlbumListFragment", "onViewCreated")
+
     }
 
     var job: Job? = null
@@ -122,6 +121,11 @@ class AlbumListFragment : Fragment() {
         super.onStop()
         job?.cancel()
         Log.d("AlbumListFragment", "onStop")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("AlbumListFragment", "onstart")
     }
 
     override fun onDestroy() {

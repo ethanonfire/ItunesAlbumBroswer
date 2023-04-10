@@ -10,10 +10,24 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-class ArtistSearchViewModel(var repository: Repository) : ViewModel() {
+class RecentSearchViewModel(var repository: Repository) : ViewModel() {
 
     private var _searchFlow = MutableStateFlow<UiState?>(null)
-    var artistSearchFlow: StateFlow<UiState?> = _searchFlow
+
+    var recentSearchFlow: StateFlow<UiState?> = _searchFlow
+
+    init {
+        viewModelScope.launch {
+            getRecentSearch()
+        }
+    }
+
+    private suspend fun getRecentSearch() {
+        repository.getRecentSearches().collect {
+            Log.d("ArtistSearchViewModel", it.toString())
+            _searchFlow.value = it
+        }
+    }
 
     fun insertRecentSearch(search: RecentArtistSearch) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -28,19 +42,19 @@ class ArtistSearchViewModel(var repository: Repository) : ViewModel() {
         }
     }
 
-    suspend fun searchArtistByName(name: String) {
-        repository.searchArtistByName(name).collect {
-            _searchFlow.value = it
-        }
-    }
+//    suspend fun searchArtistByName(name: String) {
+//        repository.searchArtistByName(name).collect {
+//            _searchFlow.value = it
+//        }
+//    }
 
     class MapViewModelFactory(private val repository: Repository) :
         ViewModelProvider.Factory {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(ArtistSearchViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(RecentSearchViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ArtistSearchViewModel(repository) as T
+                return RecentSearchViewModel(repository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
